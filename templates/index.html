@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Roller</title>
+</head>
+<body>
+    <h1>Welcome to the Dice Roller</h1>
+    <form id="roll-form" action="/roll" method="post">
+        <label for="num_dice">Select number of dice:</label>
+        <select name="num_dice" id="num_dice">
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+        <button id="roll-button" type="submit">Roll Dice</button>
+    </form>
+    <div id="result"></div>
+    <button id="total-button" type="button">Get total</button>
+
+    <script>
+        document.getElementById('roll-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const response = await fetch('/roll', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.text();
+            document.getElementById('result').innerText = data;
+        });
+
+        document.getElementById('total-button').addEventListener('click', async () => {
+            const response = await fetch('/total', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ rolls: [] })  // Pass an empty array since we're not sending any data from the roll form
+            });
+            const data = await response.json();
+            document.getElementById('result').innerText = `Total: ${data.total}`;
+        });
+    </script>
+</body>
+</html>
